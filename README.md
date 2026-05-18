@@ -4,6 +4,8 @@ A shared Minecraft world you can host at home. This folder contains the **world 
 
 **Important:** Everyone must use the same Minecraft version: **26.2 Snapshot 7** (Java Edition). In the launcher, enable snapshots under *Installations* → *Snapshots*, then install **26.2 Snapshot 7**. (It's prolly enabled anyway so if the snapshot's in your dropdown just click it)
 
+# EXTRA IMPORTANT: IF YOU ARE HOSTING YOU MUST git pull BEFORE STARTING THE SERVER AND PUSH THE NEW SAVE AFTER STOPPING. SAVE CONFLICTS CANNOT BE RESOLVED
+
 ---
 
 ## What you need once per computer
@@ -25,6 +27,8 @@ You do **not** need to buy Minecraft again to host, but you need a Java Edition 
 
 **Windows (Git Bash or PowerShell):**
 
+You dont need to be in any specific folder to git clone, I just had mine in ~/fun/minecraft so gpt defaulted to there
+
 ```text
 cd %USERPROFILE%\fun\minecraft
 git clone git@github.com:efarrall/NoahMiner.git
@@ -41,6 +45,7 @@ cd NoahMiner
 ```
 
 (If you use HTTPS instead of SSH: `git clone https://github.com/efarrall/NoahMiner.git`)
+Your gonna have to set up an SSH key prolly cause git wants them, you can probably set one up in like 15 min if you ask the hive mind
 
 ### 2. Install Java
 
@@ -167,17 +172,3 @@ If Git complains about conflicts, ask in your group chat—do not guess. Someone
 
 Files **not** in Git (you create them locally): `server.jar`, `logs/`, `ops.json`, etc.
 
----
-
-## For Eric (first push to GitHub)
-
-After cloning this setup, from the NoahMiner folder:
-
-```bash
-git add -A
-git status   # should show world/, README, scripts, etc.—not server.jar
-git commit -m "Add NoahMiner world and server hosting setup"
-git push -u origin main
-```
-
-The world is ~300 MB; the first push may take several minutes.
