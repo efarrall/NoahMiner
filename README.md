@@ -2,7 +2,7 @@
 
 A shared Minecraft world you can host at home. This folder contains the **world save** and server settings. Each person downloads the official Minecraft server program separately (Mojang does not allow bundling it in GitHub).
 
-**Important:** Everyone must use the same Minecraft version: **26.2 Snapshot 7** (Java Edition). In the launcher, enable snapshots under *Installations* → *Snapshots*, then install **26.2 Snapshot 7**.
+**Important:** Everyone must use the same Minecraft version: **26.2 Snapshot 7** (Java Edition). In the launcher, enable snapshots under *Installations* → *Snapshots*, then install **26.2 Snapshot 7**. (It's prolly enabled anyway so if the snapshot's in your dropdown just click it)
 
 ---
 
