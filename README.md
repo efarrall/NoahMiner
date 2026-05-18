@@ -2,11 +2,7 @@
 
 A shared Minecraft world you can host at home. This folder contains the **world save** and server settings. Each person downloads the official Minecraft server program separately (Mojang does not allow bundling it in GitHub).
 
-**Important:** Everyone must use the same Minecraft version: **26.2 Snapshot 7** (Java Edition). In the launcher, enable snapshots under *Installations* → *Snapshots*, then install **26.2 Snapshot 7**. (It's prolly enabled anyway so if the snapshot's in your dropdown just click it)
-
-# EXTRA IMPORTANT: IF YOU ARE HOSTING YOU MUST git pull BEFORE STARTING THE SERVER AND PUSH THE NEW SAVE AFTER STOPPING. SAVE CONFLICTS CANNOT BE RESOLVED
-
-Also this way made with GPT so if stuff doesnt work easily tell me
+**Important:** Everyone must use the same Minecraft version: **26.2 Snapshot 7** (Java Edition). In the launcher, enable snapshots under *Installations* → *Snapshots*, then install **26.2 Snapshot 7**.
 
 ---
 
@@ -15,9 +11,10 @@ Also this way made with GPT so if stuff doesnt work easily tell me
 | Item | Where to get it |
 |------|-----------------|
 | **Git** | [git-scm.com](https://git-scm.com/) (Windows) or your Linux package manager |
-| **Java 21 or newer** | [adoptium.net](https://adoptium.net/) — pick Temurin 21 LTS |
+| **Java 25 or newer** | Required for Minecraft 26.2 — see below |
 | **This repo** | Clone from GitHub (see below) |
 | **server.jar** | Use the download script in this repo (one click / one command) |
+| **playit.gg** (online play, no router setup) | Free — see [Playing over the internet](#playing-over-the-internet-playitgg) |
 
 You do **not** need to buy Minecraft again to host, but you need a Java Edition account to play, and players connect with the same snapshot version.
 
@@ -28,8 +25,6 @@ You do **not** need to buy Minecraft again to host, but you need a Java Edition 
 ### 1. Get the project folder
 
 **Windows (Git Bash or PowerShell):**
-
-You dont need to be in any specific folder to git clone, I just had mine in ~/fun/minecraft so gpt defaulted to there
 
 ```text
 cd %USERPROFILE%\fun\minecraft
@@ -47,30 +42,32 @@ cd NoahMiner
 ```
 
 (If you use HTTPS instead of SSH: `git clone https://github.com/efarrall/NoahMiner.git`)
-Your gonna have to set up an SSH key prolly cause git wants them, you can probably set one up in like 15 min if you ask the hive mind
 
-### 2. Install Java
+### 2. Install Java 25
 
-- **Windows:** Install [Eclipse Temurin 21](https://adoptium.net/). During setup, check “Add to PATH” if offered.
-- **Linux (Ubuntu/Debian):** `sudo apt install openjdk-21-jre`
+Minecraft **26.2** needs **Java 25**, not Java 21. If you see `class file version 69.0` or `only recognizes class file versions up to 65.0`, your Java is too old.
 
-Check it works:
+**Linux (Ubuntu/Debian):**
 
 ```bash
+sudo apt update
+sudo apt install openjdk-25-jre-headless
 java -version
 ```
 
-You should see version **21** or higher.
+You should see `openjdk version "25"` (or higher).
+
+**Windows:** Install [Eclipse Temurin **25**](https://adoptium.net/temurin/releases/?version=25) (not 21). During setup, check “Add to PATH” if offered. Open a **new** Command Prompt and run `java -version`.
 
 ### 3. Download the Minecraft server
 
 **Windows:** Double-click `scripts\download-server.bat`  
 (wait until it says it saved `server.jar`)
 
-**Linux:** In a terminal:
+**Linux:**
 
 ```bash
-chmod +x scripts/download-server.sh start-server.sh
+chmod +x scripts/download-server.sh scripts/find-java.sh start-server.sh
 ./scripts/download-server.sh
 ```
 
@@ -104,19 +101,97 @@ The first start can take a few minutes while the world loads. When you see `Done
 
 ## Letting friends join
 
-### On your home network (LAN)
+### On the same computer as the server
 
-1. Find your computer’s local IP:
-   - **Windows:** Open Command Prompt, run `ipconfig`, look for **IPv4 Address** (e.g. `192.168.1.42`).
-   - **Linux:** Run `hostname -I` and use the first address.
-2. Friends open Minecraft → **Multiplayer** → **Add Server**.
-3. Address: `192.168.1.42` (use your real IP). Port is **25565** unless you changed it in `server.properties`.
+In Minecraft → **Multiplayer** → **Add Server**, use:
 
-### Over the internet
+```text
+localhost
+```
 
-Your router must forward **port 25565 (TCP)** to the computer running the server. Steps differ per router; search for “port forwarding” in your router’s admin page. Give friends your **public IP** (search “what is my ip” in a browser) and port `25565`.
+### On the same home Wi‑Fi (another device in the house)
 
-**Security note:** `online-mode=true` in `server.properties` means only real Minecraft accounts can join (recommended). Do not share your router password.
+1. On the hosting PC, find its local IP:
+   - **Windows:** Command Prompt → `ipconfig` → **IPv4 Address** (e.g. `192.168.1.42`)
+   - **Linux:** `hostname -I` (first address)
+2. On the other device, add server address: `192.168.1.42` (your real IP)
+
+### Playing over the internet (playit.gg)
+
+If your router **cannot** do port forwarding (or you don’t want to), use **[playit.gg](https://playit.gg/)** — the same kind of service that gives addresses like `z-es.gl.joinmc.link`. Friends type **that address** in Minecraft, not your home IP.
+
+You need **two programs running** while people play:
+
+1. **Minecraft server** — `./start-server.sh` (or `start-server.bat`) until you see `Done!`
+2. **playit agent** — keeps the tunnel open (see setup below)
+
+#### playit.gg setup on Linux (recommended for NoahMiner hosts)
+
+**One-time install (Ubuntu/Debian):**
+
+```bash
+curl -SsL https://playit-cloud.github.io/ppa/key.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/playit.gpg >/dev/null
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/playit.gpg] https://playit-cloud.github.io/ppa/data ./" | sudo tee /etc/apt/sources.list.d/playit-cloud.list
+sudo apt update
+sudo apt install playit
+```
+
+*(Other distros: download `playit-linux-amd64` from [playit.gg/download](https://playit.gg/download), `chmod +x`, run `./playit-linux-amd64`.)*
+
+**One-time account link:**
+
+```bash
+playit setup
+```
+
+Follow the link in the terminal, sign in (or create a free account at [playit.gg](https://playit.gg/)), and **claim** this computer as an agent.
+
+**Create the Minecraft tunnel (one-time, or via website):**
+
+1. Open [playit.gg](https://playit.gg/) → log in → **Agents** → pick your computer.
+2. **Add tunnel** (or **Create tunnel**).
+3. Type: **Minecraft Java**
+4. Local address: `127.0.0.1` and port **25565** (must match `server.properties` — default is 25565).
+5. Save. playit shows a public address like `something.gl.joinmc.link`.
+
+**Share that address** with friends. They paste it into **Server Address** in Minecraft. No port number needed for the default setup.
+
+**Every time you host:**
+
+```bash
+# Terminal 1 — start Minecraft first, wait for Done!
+cd ~/fun/minecraft/NoahMiner
+./start-server.sh
+
+# Terminal 2 — start playit (leave running)
+playit start
+# or, if you installed the raw binary: ./playit-linux-amd64
+```
+
+If you use `sudo systemctl start playit` for 24/7, you only need to start the Minecraft server yourself.
+
+#### playit.gg on Windows
+
+1. Download the Windows agent from [playit.gg/download](https://playit.gg/download).
+2. Run it, claim the agent via the link it shows (same account as Linux is fine).
+3. Create a **Minecraft Java** tunnel to `127.0.0.1:25565`.
+4. Start `start-server.bat`, then keep the playit app running.
+5. Give friends the `*.gl.joinmc.link` address.
+
+#### playit troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| **Unknown host** when joining `*.joinmc.link` | [Update DNS on Linux](https://playit.gg/support/linux-update-dns/) (Google `8.8.8.8` or Cloudflare `1.1.1.1`) |
+| Friends can’t connect | Is `./start-server.sh` showing `Done!`? Is playit still running? |
+| Tunnel disconnected | Restart playit; address usually stays the same |
+| Wrong version | Everyone on **26.2 Snapshot 7** |
+
+### Port forwarding (optional, not required with playit)
+
+Only if you prefer not to use playit: forward **TCP 25565** on your router to the hosting PC, then give friends your **public IP** from [whatismyip.com](https://whatismyip.com). Most NoahMiner hosts should use playit instead.
+
+**Security:** `online-mode=true` means only real Minecraft accounts can join (recommended).
 
 ---
 
@@ -148,12 +223,14 @@ If Git complains about conflicts, ask in your group chat—do not guess. Someone
 
 | Problem | What to try |
 |---------|-------------|
-| `java` is not recognized | Install Java 21+ and restart the terminal / PC |
+| `class file version 69.0` / `up to 65.0` | Install **Java 25** (see step 2), then run `./start-server.sh` again |
+| `java` is not recognized | Install Java 25 and restart the terminal / PC |
 | `server.jar not found` | Run the download script again |
 | Server asks about EULA | Set `eula=true` in `eula.txt` |
-| Friends can’t connect | Same Wi‑Fi? Firewall blocking port 25565? Correct IP? |
+| Friends can’t connect (playit) | Server at `Done!`? playit running? Correct `*.gl.joinmc.link` address? |
+| Friends can’t connect (LAN) | Same Wi‑Fi? Firewall allowing Java / port 25565? |
 | “Outdated server” / version mismatch | Everyone must use **26.2 Snapshot 7** (see `minecraft-version.txt`) |
-| World looks wrong after update | Make sure you ran `git pull` before starting and `stop` before pushing |
+| World looks wrong after update | `git pull` before starting, `stop` before pushing |
 
 **More memory (lag with many players):**  
 - Linux: `NOAHMINER_MEMORY=4G ./start-server.sh`  
@@ -169,8 +246,7 @@ If Git complains about conflicts, ask in your group chat—do not guess. Someone
 | `server.properties` | Game rules, max players, port, etc. |
 | `minecraft-version.txt` | Exact Minecraft version for the download script |
 | `eula.txt` | Mojang license acceptance (you must edit once) |
-| `scripts/` | Download helpers for `server.jar` |
+| `scripts/` | Download helpers and Java version check |
 | `start-server.sh` / `start-server.bat` | Start the server |
 
-Files **not** in Git (you create them locally): `server.jar`, `logs/`, `ops.json`, etc.
-
+Files **not** in Git (you create them locally): `server.jar`, `logs/`, `ops.json`, playit agent binary (if not installed via apt), etc.

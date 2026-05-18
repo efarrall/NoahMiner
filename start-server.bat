@@ -17,6 +17,7 @@ if errorlevel 1 (
 )
 
 echo Starting NoahMiner...
+echo Minecraft 26.2 requires Java 25 or newer. Check with: java -version
 echo Stop the server cleanly: type  stop  in this window, then wait for it to exit.
 java -Xms2G -Xmx2G -jar server.jar nogui
 pause

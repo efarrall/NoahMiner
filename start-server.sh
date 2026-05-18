@@ -16,7 +16,9 @@ if ! grep -q '^eula=true' eula.txt 2>/dev/null; then
   exit 1
 fi
 
+JAVA_BIN="$("$ROOT/scripts/find-java.sh")"
 MEM="${NOAHMINER_MEMORY:-2G}"
+echo "Using: $("$JAVA_BIN" -version 2>&1 | head -1)"
 echo "Starting NoahMiner (Java memory: ${MEM})..."
 echo "Stop the server cleanly: type  stop  in this window, then wait for it to exit."
-exec java -Xms"${MEM}" -Xmx"${MEM}" -jar server.jar nogui
+exec "$JAVA_BIN" -Xms"${MEM}" -Xmx"${MEM}" -jar server.jar nogui
