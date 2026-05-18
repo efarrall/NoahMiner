@@ -6,6 +6,8 @@ A shared Minecraft world you can host at home. This folder contains the **world 
 
 # EXTRA IMPORTANT: IF YOU ARE HOSTING YOU MUST git pull BEFORE STARTING THE SERVER AND PUSH THE NEW SAVE AFTER STOPPING. SAVE CONFLICTS CANNOT BE RESOLVED
 
+Also this way made with GPT so if stuff doesnt work easily tell me
+
 ---
 
 ## What you need once per computer
